@@ -17,13 +17,19 @@ pipeline{
             choices: ['Debug','Release'],
             description: 'Build Type'
         )
+        choice(
+            name: 'BranchToBuild',
+            choices: ['DeclarativePipeline', 'ScriptedPipeline', 'master'],
+            description: 'Branch to be build'
+
+        )
     }
     stages
     {
         stage('git')
         {
             steps{
-                git branch: 'DeclarativePipeline', url: 'https://github.com/naresh86/game-of-life.git'
+                git branch: "${params.BranchToBuild}", url: 'https://github.com/naresh86/game-of-life.git'
 
             }
         }
@@ -31,6 +37,15 @@ pipeline{
         {
             steps{
                 sh 'mvn clean package'
+            }
+        }
+        stage('postbuild') {
+            steps {
+                // junit test Results
+                junit testResults: "${params.TestResultsPath}"
+
+                // archive the artifacts
+                archive includes: "${params.ArtifactsToBeArchive}"
             }
         }
 
