@@ -1,6 +1,23 @@
 pipeline{
     agent{label 'HRMS&&QA'}
     triggers{ cron('30 * * * 1-5')}
+    parameters{
+        string(
+            name: 'TestResultsPath',
+            defaultValue: 'gameoflife-web/target/surefire-reports/*.xml',
+            description: 'Test Results Path'
+        )
+        string(
+            name:'ArtifactsTobeArchive',
+            defaultValue: 'gameoflife-web/target/*.war',
+            description: 'This is Archival path'
+        )
+        choice(
+            name: 'BUILD_TYPE',
+            choices: ['Debug','Release'],
+            description: 'Build Type'
+        )
+    }
     stages
     {
         stage('git')
